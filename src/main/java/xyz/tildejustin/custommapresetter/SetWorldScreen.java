@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.IdentifibleBooleanConsumer;
 import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.storage.LevelStorageAccess;
 import net.minecraft.world.level.storage.LevelSummary;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +28,7 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
     private int selectedWorld;
     private List<LevelSummary> worlds;
     public WorldListWidget worldList;
-    private String[] gameModeTexts = new String[4];
+    private final String[] gameModeTexts = new String[4];
     private ButtonWidget selectButton;
     private String defaultWorldName;
     private String mustConvertText;
@@ -44,6 +45,10 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         } catch (ClientException e) {
             e.printStackTrace();
         }
+        this.gameModeTexts[LevelInfo.GameMode.SURVIVAL.getId()] = I18n.translate("gameMode.survival");
+        this.gameModeTexts[LevelInfo.GameMode.CREATIVE.getId()] = I18n.translate("gameMode.creative");
+        this.gameModeTexts[LevelInfo.GameMode.ADVENTURE.getId()] = I18n.translate("gameMode.adventure");
+        this.gameModeTexts[LevelInfo.GameMode.SPECTATOR.getId()] = I18n.translate("gameMode.spectator");
         this.mustConvertText = I18n.translate("selectWorld.conversion");
         this.defaultWorldName = I18n.translate("selectWorld.world");
         worldList = new WorldListWidget(this.client);
@@ -52,6 +57,7 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         this.selectButton.active = false;
         this.buttons.add(new ButtonWidget(0, this.width / 2 + 5, this.height - 28, 150, 20, I18n.translate("gui.cancel")));
         this.buttons.add(selectButton);
+        this.buttons.add(new ButtonWidget(6, this.width / 2 + 5 + 150 + 5, this.height - 28, 150, 20, "Delete Session Worlds"));
     }
 
     @Override
@@ -63,8 +69,16 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
             CustomMapResetter.resetTracker.setCurrentWorld(this.getWorldFileName(this.selectedWorld));
             this.client.setScreen(this.parent);
         } else if (button.id == 0) {
-            CustomMapResetter.resetTracker.setCurrentWorld(null);;
+            CustomMapResetter.resetTracker.setCurrentWorld(null);
+            ;
             this.client.setScreen(this.parent);
+        } else if (button.id == 6) {
+            CustomMapResetter.resetTracker.deleteWorlds();
+            try {
+                this.loadWorlds();
+            } catch (ClientException e) {
+                e.printStackTrace();
+            }
         } else {
             worldList.buttonClicked(button);
         }
@@ -77,14 +91,6 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         worldList.handleMouse();
     }
 
-    protected String getWorldName(int index) {
-        String string = this.worlds.get(index).getDisplayName();
-        if (StringUtils.isEmpty(string)) {
-            string = I18n.translate("selectWorld.world") + " " + (index + 1);
-        }
-        return string;
-    }
-
     protected String getWorldFileName(int index) {
         return this.worlds.get(index).getFileName();
     }
@@ -93,13 +99,13 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         LevelStorageAccess levelStorageAccess = this.client.getCurrentSave();
         this.worlds = levelStorageAccess.getLevelList();
         Collections.sort(this.worlds);
+        Collections.reverse(this.worlds);
         this.selectedWorld = -1;
     }
 
     @Override
     public void render(int mouseX, int mouseY, float tickDelta) {
         worldList.render(mouseX, mouseY, tickDelta);
-//        this.drawCenteredString(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
         super.render(mouseX, mouseY, tickDelta);
     }
 

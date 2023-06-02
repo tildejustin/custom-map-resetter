@@ -13,7 +13,6 @@ import xyz.tildejustin.custommapresetter.CustomMapResetter;
 
 @Mixin(SettingsScreen.class)
 public abstract class SettingsScreenMixin extends Screen {
-
     @Inject(method = "init", at = @At("TAIL"))
     public void custommapresetter$addStopButton(CallbackInfo ci) {
         if (CustomMapResetter.running) {

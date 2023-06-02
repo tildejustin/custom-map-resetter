@@ -1,30 +1,50 @@
 package xyz.tildejustin.custommapresetter;
 
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 public class ResetTracker {
     public Map<String, Integer> resetCount;
     public File resetCountFile;
     private @Nullable String currentWorld;
+    private List<File> sessionWorlds;
 
-    public void setCurrentWorld(@Nullable String currentWorld) {
-        System.out.println("new currentworld = " + currentWorld);
-        this.currentWorld = currentWorld;
+    public ResetTracker(File countFile) {
+        this.resetCount = this.readResetCountFile(countFile);
+        this.resetCountFile = countFile;
+        this.sessionWorlds = new ArrayList<>();
+    }
+
+    public void addWorld(File world) {
+        sessionWorlds.add(world);
+    }
+
+    public void deleteWorlds() {
+        for (File world : this.sessionWorlds) {
+            if (world.exists()) {
+                try {
+                    FileUtils.deleteDirectory(world);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        this.sessionWorlds = new ArrayList<>();
     }
 
     public @Nullable String getCurrentWorld() {
         return this.currentWorld;
     }
 
-    public ResetTracker(File countFile) {
-        this.resetCount = this.readResetCountFile(countFile);
-        this.resetCountFile = countFile;
+    public void setCurrentWorld(@Nullable String currentWorld) {
+//        System.out.println("new currentworld = " + currentWorld);
+        this.currentWorld = currentWorld;
     }
 
     public int incrementAttemptCount(String name) {
@@ -37,7 +57,8 @@ public class ResetTracker {
     private Map<String, Integer> readResetCountFile(File countFile) {
         try {
             countFile.createNewFile();
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
         Map<String, Integer> newAttempts = new HashMap<>();
         try (Scanner countFileReader = new Scanner(countFile)) {
             if (countFileReader.hasNext()) {
@@ -50,7 +71,8 @@ public class ResetTracker {
                 String[] line = countFileReader.nextLine().split(" = ");
                 newAttempts.put(line[0], Integer.parseInt(line[1]));
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
         return newAttempts;
     }
 
@@ -70,13 +92,15 @@ public class ResetTracker {
                     fileWriter.write(" = ");
                     fileWriter.write(String.valueOf(attempts));
                     fileWriter.newLine();
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                }
                 try {
                     fileWriter.close();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             });
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 }
