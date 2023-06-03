@@ -4,7 +4,9 @@
   "package": "xyz.tildejustin.custommapresetter.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerManagerMixin"
+    "EntryAccessor",
+    "PlayerManagerMixin",
+    "SelectWorldScreenAccessor"
   ],
   "client": [
     "SettingsScreenMixin",

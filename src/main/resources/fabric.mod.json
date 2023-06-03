@@ -22,5 +22,6 @@
   },
   "breaks": {
     "atum": "*"
-  }
+  },
+  "accessWidener": "custom-map-resetter.accesswidener"
 }
