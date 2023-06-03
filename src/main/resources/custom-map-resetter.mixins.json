@@ -4,6 +4,7 @@
   "package": "xyz.tildejustin.custommapresetter.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "class2847Accessor",
     "PlayerManagerMixin"
   ],
   "client": [

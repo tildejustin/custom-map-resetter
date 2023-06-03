@@ -3,7 +3,8 @@ package xyz.tildejustin.custommapresetter;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.LoadingScreenRenderer;
+import net.minecraft.client.gui.screen.ProgressScreen;
+import net.minecraft.text.LiteralText;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -29,9 +30,9 @@ public class CustomMapResetter implements ModInitializer {
 		}
 		System.out.println("loading: " + saveFile);
 		CustomMapResetter.running = true;
-		LoadingScreenRenderer loadingScreen = new LoadingScreenRenderer(MinecraftClient.getInstance());
-		loadingScreen.setTitle("Copying World");
-		loadingScreen.setTask("");
+		ProgressScreen loadingScreen = new ProgressScreen();
+		loadingScreen.method_21526(new LiteralText("Copying World"));
+		MinecraftClient.getInstance().setScreen(loadingScreen);
 		while (newSave.exists()) {
 			newSave = new File(newSave.toString() + "-");
 		}

@@ -26,25 +26,21 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At(value = "TAIL"))
     private void custommapresetter$addTitleScreenButton(CallbackInfo ci) {
-        this.buttons.add(new ButtonWidget(13, this.width / 2 - 124, this.height / 4 + 48, 20, 20, ""));
+        this.buttons.add(new ButtonWidget(13, this.width / 2 - 124, this.height / 4 + 48, 20, 20, "") {
+            @Override
+            public void method_18374(double d, double e) {
+                if (Screen.hasShiftDown()) {
+                    client.setScreen(new SetWorldScreen(client.currentScreen));
+                } else {
+                    CustomMapResetter.tryLoadNewWorld();
+                }
+            }
+        });
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void custommapresetter$goldBootsOverlay(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         this.client.getTextureManager().bindTexture(BUTTON_IMAGE);
         DrawableHelper.drawTexture(this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 0.0F, 0.0F, 16, 16, 16, 16);
-    }
-
-    @Inject(method = "buttonClicked", at = @At("HEAD"), cancellable = true)
-    public void buttonClicked(ButtonWidget button, CallbackInfo ci) {
-        if (button.id == 13) {
-            if (Screen.hasShiftDown()) {
-                client.setScreen(new SetWorldScreen(client.currentScreen));
-            } else {
-                CustomMapResetter.tryLoadNewWorld();
-            }
-            ci.cancel();
-        }
-
     }
 }
