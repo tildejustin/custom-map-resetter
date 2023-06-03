@@ -10,7 +10,6 @@ import net.minecraft.client.gui.widget.IdentifibleBooleanConsumer;
 import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.Formatting;
-import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.storage.LevelStorageAccess;
 import net.minecraft.world.level.storage.LevelSummary;
 import org.apache.commons.lang3.StringUtils;
@@ -24,11 +23,10 @@ import java.util.List;
 
 public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer {
     private final DateFormat dateFormat = new SimpleDateFormat();
+    public WorldListWidget worldList;
     protected Screen parent;
     private int selectedWorld;
     private List<LevelSummary> worlds;
-    public WorldListWidget worldList;
-    private final String[] gameModeTexts = new String[4];
     private ButtonWidget selectButton;
     private String defaultWorldName;
     private String mustConvertText;
@@ -37,7 +35,7 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
     public SetWorldScreen(Screen parent) {
         this.parent = parent;
     }
-    
+
     @Override
     public void init() {
         try {
@@ -45,10 +43,6 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         } catch (ClientException e) {
             e.printStackTrace();
         }
-        this.gameModeTexts[LevelInfo.GameMode.SURVIVAL.getId()] = I18n.translate("gameMode.survival");
-        this.gameModeTexts[LevelInfo.GameMode.CREATIVE.getId()] = I18n.translate("gameMode.creative");
-        this.gameModeTexts[LevelInfo.GameMode.ADVENTURE.getId()] = I18n.translate("gameMode.adventure");
-        this.gameModeTexts[LevelInfo.GameMode.SPECTATOR.getId()] = I18n.translate("gameMode.spectator");
         this.mustConvertText = I18n.translate("selectWorld.conversion");
         this.defaultWorldName = I18n.translate("selectWorld.world");
         worldList = new WorldListWidget(this.client);
@@ -70,7 +64,6 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
             this.client.setScreen(this.parent);
         } else if (button.id == 0) {
             CustomMapResetter.resetTracker.setCurrentWorld(null);
-            ;
             this.client.setScreen(this.parent);
         } else if (button.id == 6) {
             CustomMapResetter.resetTracker.deleteWorlds();
@@ -109,8 +102,8 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         super.render(mouseX, mouseY, tickDelta);
     }
 
-    @Environment(value= EnvType.CLIENT)
-    class WorldListWidget extends ListWidget {
+    @Environment(value = EnvType.CLIENT)
+    class WorldListWidget extends ListWidget implements WorldListWidgetFaker {
         public WorldListWidget(MinecraftClient client) {
             super(client, SetWorldScreen.this.width, SetWorldScreen.this.height, 32, SetWorldScreen.this.height - 32, 36);
         }
@@ -148,29 +141,41 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
 
         @Override
         protected void renderEntry(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {
-            LevelSummary levelSummary = (LevelSummary)SetWorldScreen.this.worlds.get(index);
+            LevelSummary levelSummary = SetWorldScreen.this.worlds.get(index);
             String string = levelSummary.getDisplayName();
             if (StringUtils.isEmpty(string)) {
                 string = SetWorldScreen.this.defaultWorldName + " " + (index + 1);
             }
             String string2 = levelSummary.getFileName();
-            string2 = string2 + " (" + SetWorldScreen.this.dateFormat.format(new Date(levelSummary.getLastPlayed()));
-            string2 = string2 + ")";
+            string2 += " (" + SetWorldScreen.this.dateFormat.format(new Date(levelSummary.getLastPlayed()));
+            string2 += ")";
             String string3 = "";
+            boolean comma = false;
             if (levelSummary.requiresConversion()) {
-                string3 = SetWorldScreen.this.mustConvertText + " " + string3;
-            } else {
-                string3 = SetWorldScreen.this.gameModeTexts[levelSummary.getGameMode().getId()];
-                if (levelSummary.isHardcore()) {
-                    string3 = (Object)((Object) Formatting.DARK_RED) + I18n.translate("gameMode.hardcore", new Object[0]) + (Object)((Object)Formatting.RESET);
+                string3 += SetWorldScreen.this.mustConvertText;
+                comma = true;
+            }
+            if (levelSummary.isHardcore()) {
+                if (comma) {
+                    string3 += ", ";
                 }
-                if (levelSummary.cheatsEnabled()) {
-                    string3 = string3 + ", " + I18n.translate("selectWorld.cheats");
+                string3 += Formatting.DARK_RED + I18n.translate("gameMode.hardcore") + Formatting.RESET;
+                comma = true;
+            }
+            if (levelSummary.cheatsEnabled()) {
+                if (comma) {
+                    string3 += ", ";
                 }
+                string3 += I18n.translate("selectWorld.cheats");
             }
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string, x + 2, y + 1, 0xFFFFFF);
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string2, x + 2, y + 12, 0x808080);
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string3, x + 2, y + 12 + 10, 0x808080);
+        }
+
+        @Override
+        public void method_1055(int index, int x, int y, int rowHeight, int mouseX, int mouseY, float f) {
+            renderEntry(index, x, y, rowHeight, mouseX, mouseY);
         }
     }
 }
