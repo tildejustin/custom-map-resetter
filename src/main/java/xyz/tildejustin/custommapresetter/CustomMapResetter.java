@@ -43,7 +43,7 @@ public class CustomMapResetter implements ModInitializer {
 			e.printStackTrace();
 		}
 		resetTracker.addWorld(newSave);
-		MinecraftClient.getInstance().startIntegratedServer(newSave.getName(), newSave.getName(), null);
+		MinecraftClient.getInstance().startIntegratedServer(newSave.getName());
 	}
 
 	@Override

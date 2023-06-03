@@ -1,3 +1,4 @@
 accessWidener	v1	named
 accessible field net/minecraft/client/gui/screen/world/WorldListWidget$Entry level Lnet/minecraft/world/level/storage/LevelSummary;
 accessible method net/minecraft/client/MinecraftClient render (Z)V
+accessible field net/minecraft/client/gui/screen/Screen children Ljava/util/List;

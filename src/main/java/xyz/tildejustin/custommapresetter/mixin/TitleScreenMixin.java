@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,16 +22,14 @@ public abstract class TitleScreenMixin extends Screen {
         super(title);
     }
 
-    @Inject(method = "init", at = @At(value = "TAIL"))
-    private void custommapresetter$loadnext(CallbackInfo ci) {
+
+    @Inject(method = "initWidgetsNormal", at = @At(value = "TAIL"))
+    private void custommapresetter$addTitleScreenButton(CallbackInfo ci) {
         if (CustomMapResetter.running && !CustomMapResetter.loading) {
             CustomMapResetter.tryLoadNewWorld();
         }
-    }
-
-    @Inject(method = "init", at = @At(value = "TAIL"))
-    private void custommapresetter$addTitleScreenButton(CallbackInfo ci) {
-        this.addButton(new ButtonWidget(this.width / 2 - 124, this.height / 4 + 48, 20, 20, "", (buttonWidget) -> {
+        System.out.println("adding button");
+        this.addButton(new ButtonWidget(this.width / 2 - 124, this.height / 4 + 48, 20, 20, new LiteralText(""), (buttonWidget) -> {
             if (Screen.hasShiftDown()) {
                 MinecraftClient.getInstance().openScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
             } else {
