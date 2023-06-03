@@ -22,11 +22,12 @@ public abstract class SettingsScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     public void custommapresetter$addStopButton(CallbackInfo ci) {
         if (CustomMapResetter.running) {
-            this.addButton(new ButtonWidget(5, this.height - 25, 100, 20, new LiteralText("Stop Resets & Quit"), button -> {
+            this.addDrawableChild(new ButtonWidget(5, this.height - 25, 100, 20, new LiteralText("Stop Resets & Quit"), button -> {
                 CustomMapResetter.running = false;
+                assert MinecraftClient.getInstance().world != null;
                 MinecraftClient.getInstance().world.disconnect();
                 MinecraftClient.getInstance().disconnect();
-                MinecraftClient.getInstance().openScreen(new TitleScreen());
+                MinecraftClient.getInstance().setScreen(new TitleScreen());
             }));
         }
     }

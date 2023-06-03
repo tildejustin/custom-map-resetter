@@ -19,20 +19,20 @@ public class CustomMapResetter implements ModInitializer {
 	public static void tryLoadNewWorld() {
 		CustomMapResetter.loading = true;
 		if (CustomMapResetter.resetTracker.getCurrentWorld() == null) {
-			MinecraftClient.getInstance().openScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
+			MinecraftClient.getInstance().setScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
 			return;
 		}
 		File saveFile = MinecraftClient.getInstance().runDirectory.toPath().resolve("saves").resolve(CustomMapResetter.resetTracker.getCurrentWorld()).toFile();
 		File newSave = saveFile.getParentFile().toPath().resolve(CustomMapResetter.resetTracker.getCurrentWorld() + " attempt " + CustomMapResetter.resetTracker.incrementAttemptCount(CustomMapResetter.resetTracker.getCurrentWorld())).toFile();
 		if (!saveFile.exists()) {
-			MinecraftClient.getInstance().openScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
+			MinecraftClient.getInstance().setScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
 			return;
 		}
 		System.out.println("loading: " + saveFile);
 		CustomMapResetter.running = true;
-		ProgressScreen loadingScreen = new ProgressScreen();
-		loadingScreen.method_15412(new LiteralText("Copying World"));
-		MinecraftClient.getInstance().openScreen(loadingScreen);
+		ProgressScreen loadingScreen = new ProgressScreen(false);
+		loadingScreen.setTitle(new LiteralText("Copying World"));
+		MinecraftClient.getInstance().setScreen(loadingScreen);
 		MinecraftClient.getInstance().render(false);
 		while (newSave.exists()) {
 			newSave = new File(newSave + "-");
