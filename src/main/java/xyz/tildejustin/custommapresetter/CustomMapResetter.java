@@ -14,6 +14,7 @@ public class CustomMapResetter implements ModInitializer {
 	private static final File attemptCountFile = FabricLoader.getInstance().getConfigDir().resolve("custom-map-attempts.txt").toFile();
 	public static boolean running = false;
 	public static boolean loading = false;
+	public static boolean loadedTextures = false;
 
 	public static void tryLoadNewWorld() {
 		CustomMapResetter.loading = true;

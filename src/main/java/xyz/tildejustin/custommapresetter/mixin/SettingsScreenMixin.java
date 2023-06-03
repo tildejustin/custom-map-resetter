@@ -24,6 +24,7 @@ public abstract class SettingsScreenMixin extends Screen {
     public void custommapresetter$buttonClicked(ButtonWidget button, CallbackInfo ci) {
         if (button.id == 1238) {
             CustomMapResetter.running = false;
+            CustomMapResetter.loadedTextures = false;
             MinecraftClient.getInstance().world.disconnect();
             MinecraftClient.getInstance().connect(null);
             MinecraftClient.getInstance().setScreen(new TitleScreen());
