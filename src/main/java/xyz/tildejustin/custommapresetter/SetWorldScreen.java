@@ -31,7 +31,7 @@ public class SetWorldScreen extends SelectWorldScreen {
         ((SelectWorldScreenAccessor)this).setLevelList(new WorldListWidget(this, this.minecraft, this.width, this.height, 48, this.height - 64, 36, () -> ((SelectWorldScreenAccessor)this).getSearchBox().getText(), ((SelectWorldScreenAccessor)this).getLevelList()));
         this.children.add(((SelectWorldScreenAccessor)this).getSearchBox());
         this.children.add(((SelectWorldScreenAccessor)this).getLevelList());
-        ButtonWidget selectButton = this.addButton(new ButtonWidget(this.width / 2 - (150 / 2) - 150 - 5, this.height - 28, 150, 20, I18n.translate("selectWorld.select"), (buttonWidget) -> {
+        ButtonWidget selectButton = this.addButton(new ButtonWidget(this.width / 2 - (150 / 2) - 150 - 5, this.height - 28, 150, 20, "Select World", (buttonWidget) -> {
             //noinspection OptionalGetWithoutIsPresent
             CustomMapResetter.resetTracker.setCurrentWorld(((SelectWorldScreenAccessor)this).getLevelList().method_20159().get().level.getName());
             this.minecraft.openScreen(parent);
