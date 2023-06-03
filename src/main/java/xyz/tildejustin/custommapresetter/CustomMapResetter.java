@@ -2,7 +2,7 @@ package xyz.tildejustin.custommapresetter;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.LoadingScreenRenderer;
 
 import java.io.File;
@@ -20,18 +20,18 @@ public class CustomMapResetter implements ModInitializer {
 	public static void tryLoadNewWorld() {
 		CustomMapResetter.loading = true;
 		if (CustomMapResetter.resetTracker.getCurrentWorld() == null) {
-			Minecraft.getMinecraft().openScreen(new SetWorldScreen(Minecraft.getMinecraft().currentScreen));
+			MinecraftClient.getInstance().setScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
 			return;
 		}
-		File saveFile = Minecraft.getMinecraft().runDirectory.toPath().resolve("saves").resolve(CustomMapResetter.resetTracker.getCurrentWorld()).toFile();
+		File saveFile = MinecraftClient.getInstance().runDirectory.toPath().resolve("saves").resolve(CustomMapResetter.resetTracker.getCurrentWorld()).toFile();
 		File newSave = saveFile.getParentFile().toPath().resolve(CustomMapResetter.resetTracker.getCurrentWorld() + " attempt " + CustomMapResetter.resetTracker.incrementAttemptCount(CustomMapResetter.resetTracker.getCurrentWorld())).toFile();
 		if (!saveFile.exists()) {
-			Minecraft.getMinecraft().openScreen(new SetWorldScreen(Minecraft.getMinecraft().currentScreen));
+			MinecraftClient.getInstance().setScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
 			return;
 		}
 		System.out.println("loading: " + saveFile);
 		CustomMapResetter.running = true;
-		LoadingScreenRenderer loadingScreen = new LoadingScreenRenderer(Minecraft.getMinecraft());
+		LoadingScreenRenderer loadingScreen = new LoadingScreenRenderer(MinecraftClient.getInstance());
 		loadingScreen.setTitle("Copying World");
 		loadingScreen.setTask("");
 		while (newSave.exists()) {
@@ -66,7 +66,7 @@ public class CustomMapResetter implements ModInitializer {
 		}
 		resetTracker.addWorld(newSave);
 //		method_2935 = startIntegratedServer
-		Minecraft.getMinecraft().method_2935(newSave.getName(), newSave.getName(), null);
+		MinecraftClient.getInstance().method_2935(newSave.getName(), newSave.getName(), null);
 	}
 
 	@Override

@@ -2,12 +2,13 @@ package xyz.tildejustin.custommapresetter;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.render.Tessellator;
 
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.Language;
 import net.minecraft.world.level.storage.LevelStorageAccess;
 import net.minecraft.world.level.storage.LevelSummary;
@@ -37,13 +38,13 @@ public class SetWorldScreen extends Screen {
     @Override
     public void init() {
         this.loadWorlds();
-        this.mustConvertText = Language.getInstance().translate("selectWorld.conversion");
-        this.defaultWorldName = Language.getInstance().translate("selectWorld.world");
-        worldList = new WorldListWidget(this.field_1229);
+        this.mustConvertText = I18n.translate("selectWorld.conversion");
+        this.defaultWorldName = I18n.translate("selectWorld.world");
+        worldList = new WorldListWidget(this.client);
 //        worldList.setButtonIds(4, 5);
         this.selectButton = new ButtonWidget(1, this.width / 2 - 154, this.height - 28, 150, 20, "Select World");
         this.selectButton.active = false;
-        this.buttons.add(new ButtonWidget(0, this.width / 2 + 5, this.height - 28, 150, 20, Language.getInstance().translate("gui.cancel")));
+        this.buttons.add(new ButtonWidget(0, this.width / 2 + 5, this.height - 28, 150, 20, I18n.translate("gui.cancel")));
         this.buttons.add(selectButton);
         this.buttons.add(new ButtonWidget(6, this.width / 2 + 5 + 150 + 5, this.height - 28, 150, 20, "Delete Session Worlds"));
     }
@@ -55,10 +56,10 @@ public class SetWorldScreen extends Screen {
         }
         if (button.id == 1) {
             CustomMapResetter.resetTracker.setCurrentWorld(this.getWorldFileName(this.selectedWorld));
-            this.field_1229.openScreen(this.parent);
+            this.client.setScreen(this.parent);
         } else if (button.id == 0) {
             CustomMapResetter.resetTracker.setCurrentWorld(null);
-            this.field_1229.openScreen(this.parent);
+            this.client.setScreen(this.parent);
         } else if (button.id == 6) {
             CustomMapResetter.resetTracker.deleteWorlds();
             this.loadWorlds();
@@ -78,7 +79,7 @@ public class SetWorldScreen extends Screen {
     }
 
     private void loadWorlds() {
-        LevelStorageAccess levelStorageAccess = this.field_1229.getCurrentSave();
+        LevelStorageAccess levelStorageAccess = this.client.getCurrentSave();
         this.worlds = levelStorageAccess.getLevelList();
         Collections.sort(this.worlds);
         Collections.reverse(this.worlds);
@@ -93,7 +94,7 @@ public class SetWorldScreen extends Screen {
 
     @Environment(value = EnvType.CLIENT)
     class WorldListWidget extends ListWidget {
-        public WorldListWidget(Minecraft client) {
+        public WorldListWidget(MinecraftClient client) {
             super(client, SetWorldScreen.this.width, SetWorldScreen.this.height, 32, SetWorldScreen.this.height - 32, 36);
         }
 
@@ -109,7 +110,7 @@ public class SetWorldScreen extends Screen {
             SetWorldScreen.this.selectButton.active = bl = SetWorldScreen.this.selectedWorld >= 0 && SetWorldScreen.this.selectedWorld < this.getEntryCount();
             if (doubleClick && bl) {
                 CustomMapResetter.resetTracker.setCurrentWorld(SetWorldScreen.this.getWorldFileName(SetWorldScreen.this.selectedWorld));
-                Minecraft.getMinecraft().openScreen(SetWorldScreen.this.parent);
+                MinecraftClient.getInstance().setScreen(SetWorldScreen.this.parent);
             }
         }
 
@@ -149,14 +150,14 @@ public class SetWorldScreen extends Screen {
                 if (comma) {
                     string3 += ", ";
                 }
-                string3 += Language.getInstance().translate("gameMode.hardcore");
+                string3 += I18n.translate("gameMode.hardcore");
                 comma = true;
             }
             if (levelSummary.cheatsEnabled()) {
                 if (comma) {
                     string3 += ", ";
                 }
-                string3 += Language.getInstance().translate("selectWorld.cheats");
+                string3 += I18n.translate("selectWorld.cheats");
             }
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string, x + 2, y + 1, 0xFFFFFF);
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string2, x + 2, y + 12, 0x808080);

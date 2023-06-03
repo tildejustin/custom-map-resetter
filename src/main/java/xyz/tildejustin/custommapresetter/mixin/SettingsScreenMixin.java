@@ -1,6 +1,6 @@
 package xyz.tildejustin.custommapresetter.mixin;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SettingsScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -24,9 +24,9 @@ public abstract class SettingsScreenMixin extends Screen {
     public void custommapresetter$buttonClicked(ButtonWidget button, CallbackInfo ci) {
         if (button.id == 1238) {
             CustomMapResetter.running = false;
-            Minecraft.getMinecraft().world.disconnect();
-            Minecraft.getMinecraft().connect(null);
-            Minecraft.getMinecraft().openScreen(new TitleScreen());
+            MinecraftClient.getInstance().world.disconnect();
+            MinecraftClient.getInstance().connect(null);
+            MinecraftClient.getInstance().setScreen(new TitleScreen());
         }
     }
 }

@@ -8,8 +8,7 @@
   ],
   "client": [
     "SettingsScreenMixin",
-    "TitleScreenMixin",
-    "TextureManagerMixin"
+    "TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 0
