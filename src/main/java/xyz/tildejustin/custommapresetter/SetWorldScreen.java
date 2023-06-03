@@ -1,5 +1,6 @@
 package xyz.tildejustin.custommapresetter;
 
+import net.minecraft.client.class_2847;
 import net.minecraft.client.class_2848;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
@@ -10,7 +11,6 @@ import xyz.tildejustin.custommapresetter.mixin.class2847Accessor;
 
 public class SetWorldScreen extends SelectWorldScreen {
     protected Screen parent;
-    private ButtonWidget selectButton;
     protected TextFieldWidget field_20497;
     private class_2848 field_13358;
 
@@ -42,14 +42,18 @@ public class SetWorldScreen extends SelectWorldScreen {
                 super.setFocused(true);
             }
         };
-        this.selectButton = new ButtonWidget(1, this.width / 2 - 154, this.height - 28, 150, 20, "Select World") {
+        ButtonWidget selectButton = new ButtonWidget(1, this.width / 2 - 154, this.height - 28, 150, 20, "Select World") {
             @Override
             public void method_18374(double e, double f) {
-                CustomMapResetter.resetTracker.setCurrentWorld(((class2847Accessor) field_13358.method_12216()).getLevelSummary().getFileName());
+                class2847Accessor accessor;
+                try (class_2847 entry = field_13358.method_12216()) {
+                    accessor = (class2847Accessor) entry;
+                }
+                CustomMapResetter.resetTracker.setCurrentWorld(accessor.getLevelSummary().getFileName());
                 client.setScreen(parent);
             }
         };
-        this.selectButton.active = false;
+        selectButton.active = false;
         this.buttons.add(new ButtonWidget(0, this.width / 2 + 5, this.height - 28, 150, 20, I18n.translate("gui.cancel")) {
             @Override
             public void method_18374(double e, double f) {
