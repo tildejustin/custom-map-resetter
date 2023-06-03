@@ -42,11 +42,11 @@ public class SetWorldScreen extends Screen {
         this.defaultWorldName = I18n.translate("selectWorld.world");
         worldList = new WorldListWidget(this.client);
 //        worldList.setButtonIds(4, 5);
-        this.selectButton = new ButtonWidget(1, this.width / 2 - 154, this.height - 28, 150, 20, "Select World");
+        this.selectButton = new ButtonWidget(1, this.width / 2 - (150 / 2) - 150 - 5, this.height - 28, 150, 20, "Select World");
         this.selectButton.active = false;
-        this.buttons.add(new ButtonWidget(0, this.width / 2 + 5, this.height - 28, 150, 20, I18n.translate("gui.cancel")));
+        this.buttons.add(new ButtonWidget(0, this.width / 2 + (150 / 2) + 5, this.height - 28, 150, 20, I18n.translate("gui.cancel")));
         this.buttons.add(selectButton);
-        this.buttons.add(new ButtonWidget(6, this.width / 2 + 5 + 150 + 5, this.height - 28, 150, 20, "Delete Session Worlds"));
+        this.buttons.add(new ButtonWidget(6, this.width / 2 - 75, this.height - 28, 150, 20, "Delete Session Worlds"));
     }
 
     @Override
