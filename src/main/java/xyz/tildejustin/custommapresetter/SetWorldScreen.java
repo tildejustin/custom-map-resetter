@@ -2,19 +2,15 @@ package xyz.tildejustin.custommapresetter;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.ClientException;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.IdentifibleBooleanConsumer;
 import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.util.Formatting;
+
+import net.minecraft.util.Language;
 import net.minecraft.world.level.storage.LevelStorageAccess;
 import net.minecraft.world.level.storage.LevelSummary;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -23,7 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer {
+public class SetWorldScreen extends Screen {
     private final DateFormat dateFormat = new SimpleDateFormat();
     public WorldListWidget worldList;
     protected Screen parent;
@@ -40,18 +36,14 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
 
     @Override
     public void init() {
-        try {
-            this.loadWorlds();
-        } catch (ClientException e) {
-            e.printStackTrace();
-        }
-        this.mustConvertText = I18n.translate("selectWorld.conversion");
-        this.defaultWorldName = I18n.translate("selectWorld.world");
-        worldList = new WorldListWidget(this.client);
-        worldList.setButtonIds(4, 5);
+        this.loadWorlds();
+        this.mustConvertText = Language.getInstance().translate("selectWorld.conversion");
+        this.defaultWorldName = Language.getInstance().translate("selectWorld.world");
+        worldList = new WorldListWidget(this.field_1229);
+//        worldList.setButtonIds(4, 5);
         this.selectButton = new ButtonWidget(1, this.width / 2 - 154, this.height - 28, 150, 20, "Select World");
         this.selectButton.active = false;
-        this.buttons.add(new ButtonWidget(0, this.width / 2 + 5, this.height - 28, 150, 20, I18n.translate("gui.cancel")));
+        this.buttons.add(new ButtonWidget(0, this.width / 2 + 5, this.height - 28, 150, 20, Language.getInstance().translate("gui.cancel")));
         this.buttons.add(selectButton);
         this.buttons.add(new ButtonWidget(6, this.width / 2 + 5 + 150 + 5, this.height - 28, 150, 20, "Delete Session Worlds"));
     }
@@ -63,17 +55,13 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         }
         if (button.id == 1) {
             CustomMapResetter.resetTracker.setCurrentWorld(this.getWorldFileName(this.selectedWorld));
-            this.client.setScreen(this.parent);
+            this.field_1229.openScreen(this.parent);
         } else if (button.id == 0) {
             CustomMapResetter.resetTracker.setCurrentWorld(null);
-            this.client.setScreen(this.parent);
+            this.field_1229.openScreen(this.parent);
         } else if (button.id == 6) {
             CustomMapResetter.resetTracker.deleteWorlds();
-            try {
-                this.loadWorlds();
-            } catch (ClientException e) {
-                e.printStackTrace();
-            }
+            this.loadWorlds();
         } else {
             worldList.buttonClicked(button);
         }
@@ -83,17 +71,14 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
     @Override
     public void handleMouse() {
         super.handleMouse();
-        if (Integer.parseInt(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString().split("\\.")[1]) > 7) {
-            worldList.handleMouse();
-        }
     }
 
     protected String getWorldFileName(int index) {
         return this.worlds.get(index).getFileName();
     }
 
-    private void loadWorlds() throws ClientException {
-        LevelStorageAccess levelStorageAccess = this.client.getCurrentSave();
+    private void loadWorlds() {
+        LevelStorageAccess levelStorageAccess = this.field_1229.getCurrentSave();
         this.worlds = levelStorageAccess.getLevelList();
         Collections.sort(this.worlds);
         Collections.reverse(this.worlds);
@@ -107,8 +92,8 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
     }
 
     @Environment(value = EnvType.CLIENT)
-    class WorldListWidget extends ListWidget implements WorldListWidgetFaker {
-        public WorldListWidget(MinecraftClient client) {
+    class WorldListWidget extends ListWidget {
+        public WorldListWidget(Minecraft client) {
             super(client, SetWorldScreen.this.width, SetWorldScreen.this.height, 32, SetWorldScreen.this.height - 32, 36);
         }
 
@@ -118,13 +103,13 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         }
 
         @Override
-        protected void selectEntry(int index, boolean doubleClick, int lastMouseX, int lastMouseY) {
+        public void method_1057(int index, boolean doubleClick) {
             boolean bl;
             SetWorldScreen.this.selectedWorld = index;
             SetWorldScreen.this.selectButton.active = bl = SetWorldScreen.this.selectedWorld >= 0 && SetWorldScreen.this.selectedWorld < this.getEntryCount();
             if (doubleClick && bl) {
                 CustomMapResetter.resetTracker.setCurrentWorld(SetWorldScreen.this.getWorldFileName(SetWorldScreen.this.selectedWorld));
-                MinecraftClient.getInstance().setScreen(SetWorldScreen.this.parent);
+                Minecraft.getMinecraft().openScreen(SetWorldScreen.this.parent);
             }
         }
 
@@ -144,10 +129,11 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         }
 
         @Override
-        public void renderEntry(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {
+        public void method_1055(int index, int x, int y, int rowHeight, Tessellator t) {
+//        public void renderEntry(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {
             LevelSummary levelSummary = SetWorldScreen.this.worlds.get(index);
             String string = levelSummary.getDisplayName();
-            if (StringUtils.isEmpty(string)) {
+            if (string.isEmpty()) {
                 string = SetWorldScreen.this.defaultWorldName + " " + (index + 1);
             }
             String string2 = levelSummary.getFileName();
@@ -163,29 +149,29 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
                 if (comma) {
                     string3 += ", ";
                 }
-                string3 += Formatting.DARK_RED + I18n.translate("gameMode.hardcore") + Formatting.RESET;
+                string3 += Language.getInstance().translate("gameMode.hardcore");
                 comma = true;
             }
             if (levelSummary.cheatsEnabled()) {
                 if (comma) {
                     string3 += ", ";
                 }
-                string3 += I18n.translate("selectWorld.cheats");
+                string3 += Language.getInstance().translate("selectWorld.cheats");
             }
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string, x + 2, y + 1, 0xFFFFFF);
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string2, x + 2, y + 12, 0x808080);
             SetWorldScreen.this.drawWithShadow(SetWorldScreen.this.textRenderer, string3, x + 2, y + 12 + 10, 0x808080);
         }
 
-        @Override
-        public void method_1055(int index, int x, int y, int rowHeight, int mouseX, int mouseY, float f) {
-            renderEntry(index, x, y, rowHeight, mouseX, mouseY);
-        }
-
-        @Override
-        public void method_1055(int i, int j, int k, int l, Tessellator t, int m, int n) {
-            renderEntry(i, j, k, l, m, n);
-        }
+//        @Override
+//        public void method_1055(int index, int x, int y, int rowHeight, int mouseX, int mouseY, float f) {
+//            renderEntry(index, x, y, rowHeight, mouseX, mouseY);
+//        }
+//
+//        @Override
+//        public void method_1055(int i, int j, int k, int l, Tessellator t, int m, int n) {
+//            renderEntry(i, j, k, l, m, n);
+//        }
 
 //        @Override
 //        public void method_1055(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {

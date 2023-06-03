@@ -1,12 +1,13 @@
 package xyz.tildejustin.custommapresetter;
 
-import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 public class ResetTracker {
@@ -29,7 +30,26 @@ public class ResetTracker {
         for (File world : this.sessionWorlds) {
             if (world.exists()) {
                 try {
-                    FileUtils.deleteDirectory(world);
+                    Files.walkFileTree(world.toPath(), new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                                throws IOException {
+                            Files.delete(file);
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir, IOException e)
+                                throws IOException {
+                            if (e == null) {
+                                Files.delete(dir);
+                                return FileVisitResult.CONTINUE;
+                            } else {
+                                // directory iteration failed
+                                throw e;
+                            }
+                        }
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -1,10 +1,9 @@
 package xyz.tildejustin.custommapresetter.mixin;
 
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,7 +14,6 @@ import xyz.tildejustin.custommapresetter.SetWorldScreen;
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
 //    TODO: make it a wool block
-    private static final Identifier BUTTON_IMAGE = new Identifier("textures/items/diamond_boots.png");
 
     @Inject(method = "init", at = @At(value = "HEAD"))
     private void custommapresetter$loadnext(CallbackInfo ci) {
@@ -31,15 +29,15 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void custommapresetter$goldBootsOverlay(int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        this.client.getTextureManager().bindTexture(BUTTON_IMAGE);
-        DrawableHelper.drawTexture(this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 0.0F, 0.0F, 16, 16, 16, 16);
+        ((TextureManagerMixin) Minecraft.getMinecraft().textureManager).callBindTexture(((TextureManagerMixin) Minecraft.getMinecraft().textureManager).callGetTextureFromPath("/gui/items.png"));
+        drawTexture(this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 3 * 16, 3 * 16, 16, 16);
     }
 
     @Inject(method = "buttonClicked", at = @At("HEAD"), cancellable = true)
     public void buttonClicked(ButtonWidget button, CallbackInfo ci) {
         if (button.id == 13) {
             if (Screen.hasShiftDown()) {
-                client.setScreen(new SetWorldScreen(client.currentScreen));
+                this.field_1229.openScreen(new SetWorldScreen(this.field_1229.currentScreen));
             } else {
                 CustomMapResetter.tryLoadNewWorld();
             }
