@@ -2,12 +2,14 @@ package xyz.tildejustin.custommapresetter;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.ClientException;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.IdentifibleBooleanConsumer;
 import net.minecraft.client.gui.widget.ListWidget;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.level.storage.LevelStorageAccess;
@@ -81,7 +83,9 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
     @Override
     public void handleMouse() {
         super.handleMouse();
-        worldList.handleMouse();
+        if (Integer.parseInt(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString().split("\\.")[1]) > 7) {
+            worldList.handleMouse();
+        }
     }
 
     protected String getWorldFileName(int index) {
@@ -120,7 +124,7 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
             SetWorldScreen.this.selectButton.active = bl = SetWorldScreen.this.selectedWorld >= 0 && SetWorldScreen.this.selectedWorld < this.getEntryCount();
             if (doubleClick && bl) {
                 CustomMapResetter.resetTracker.setCurrentWorld(SetWorldScreen.this.getWorldFileName(SetWorldScreen.this.selectedWorld));
-                this.client.setScreen(SetWorldScreen.this.parent);
+                MinecraftClient.getInstance().setScreen(SetWorldScreen.this.parent);
             }
         }
 
@@ -140,7 +144,7 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         }
 
         @Override
-        protected void renderEntry(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {
+        public void renderEntry(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {
             LevelSummary levelSummary = SetWorldScreen.this.worlds.get(index);
             String string = levelSummary.getDisplayName();
             if (StringUtils.isEmpty(string)) {
@@ -177,5 +181,15 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         public void method_1055(int index, int x, int y, int rowHeight, int mouseX, int mouseY, float f) {
             renderEntry(index, x, y, rowHeight, mouseX, mouseY);
         }
+
+        @Override
+        public void method_1055(int i, int j, int k, int l, Tessellator t, int m, int n) {
+            renderEntry(i, j, k, l, m, n);
+        }
+
+//        @Override
+//        public void method_1055(int index, int x, int y, int rowHeight, int mouseX, int mouseY) {
+//            renderEntry(index, x, y, rowHeight, mouseX, mouseY);
+//        }
     }
 }
