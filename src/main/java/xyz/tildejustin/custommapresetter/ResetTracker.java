@@ -1,5 +1,6 @@
 package xyz.tildejustin.custommapresetter;
 
+import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +52,16 @@ public class ResetTracker {
         this.resetCount.putIfAbsent(name, 0);
         this.resetCount.put(name, this.resetCount.get(name) + 1);
         this.writeResetCountFile(this.resetCount, this.resetCountFile);
+        writeAttemptNumber(resetCount.get(name));
         return resetCount.get(name);
+    }
+
+    public void writeAttemptNumber(int number) {
+        try(FileWriter file = new FileWriter(FabricLoader.getInstance().getGameDir().resolve("attempt.txt").toFile()))  {
+            file.write(String.valueOf(number));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Map<String, Integer> readResetCountFile(File countFile) {
