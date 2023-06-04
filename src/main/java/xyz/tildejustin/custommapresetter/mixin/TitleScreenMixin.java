@@ -28,7 +28,6 @@ public abstract class TitleScreenMixin extends Screen {
         if (CustomMapResetter.running && !CustomMapResetter.loading) {
             CustomMapResetter.tryLoadNewWorld();
         }
-        System.out.println("adding button");
         this.addButton(new ButtonWidget(this.width / 2 - 124, this.height / 4 + 48, 20, 20, new LiteralText(""), (buttonWidget) -> {
             if (Screen.hasShiftDown()) {
                 MinecraftClient.getInstance().openScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
