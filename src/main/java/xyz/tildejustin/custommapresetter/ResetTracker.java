@@ -53,7 +53,7 @@ public class ResetTracker {
         this.resetCount.putIfAbsent(name, 0);
         this.resetCount.put(name, this.resetCount.get(name) + 1);
         this.writeResetCountFile(this.resetCount, this.resetCountFile);
-        writeAttemptNumber(resetCount.get(name));
+        this.writeAttemptNumber(resetCount.get(name));
         return resetCount.get(name);
     }
 
@@ -103,15 +103,12 @@ public class ResetTracker {
                     fileWriter.write(" = ");
                     fileWriter.write(String.valueOf(attempts));
                     fileWriter.newLine();
-                } catch (IOException ignored) {
-                }
-                try {
-                    fileWriter.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             });
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
