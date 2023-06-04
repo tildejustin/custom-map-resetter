@@ -102,15 +102,12 @@ public class ResetTracker {
                     fileWriter.write(" = ");
                     fileWriter.write(String.valueOf(attempts));
                     fileWriter.newLine();
-                } catch (IOException ignored) {
-                }
-                try {
-                    fileWriter.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             });
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
