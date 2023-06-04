@@ -8,6 +8,7 @@
     "SelectWorldScreenAccessor"
   ],
   "client": [
+    "MinecraftClientMixin",
     "SettingsScreenMixin",
     "TitleScreenMixin"
   ],

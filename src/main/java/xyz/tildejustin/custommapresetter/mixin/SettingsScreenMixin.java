@@ -24,6 +24,7 @@ public abstract class SettingsScreenMixin extends Screen {
         if (CustomMapResetter.running) {
             this.addDrawableChild(new ButtonWidget(5, this.height - 25, 100, 20, new LiteralText("Stop Resets & Quit"), button -> {
                 CustomMapResetter.running = false;
+                CustomMapResetter.loadedTextures = false;
                 assert MinecraftClient.getInstance().world != null;
                 MinecraftClient.getInstance().world.disconnect();
                 MinecraftClient.getInstance().disconnect();
