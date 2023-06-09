@@ -4,7 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ProgressScreen;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -32,7 +32,7 @@ public class CustomMapResetter implements ModInitializer {
 		System.out.println("loading: " + saveFile);
 		CustomMapResetter.running = true;
 		ProgressScreen loadingScreen = new ProgressScreen(false);
-		loadingScreen.setTitle(new LiteralText("Copying World"));
+		loadingScreen.setTitle(Text.of("Copying World"));
 		MinecraftClient.getInstance().setScreen(loadingScreen);
 		MinecraftClient.getInstance().render(false);
 		while (newSave.exists()) {
@@ -44,7 +44,7 @@ public class CustomMapResetter implements ModInitializer {
 			e.printStackTrace();
 		}
 		resetTracker.addWorld(newSave);
-		MinecraftClient.getInstance().startIntegratedServer(newSave.getName());
+		MinecraftClient.getInstance().createIntegratedServerLoader().start(MinecraftClient.getInstance().currentScreen, newSave.getName());
 	}
 
 	@Override

@@ -22,9 +22,4 @@ public abstract class MinecraftClientMixin {
             CustomMapResetter.loadedTextures = true;
         }
     }
-
-    @ModifyArg(method = "startIntegratedServer(Ljava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;startIntegratedServer(Ljava/lang/String;Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;Ljava/util/function/Function;Lcom/mojang/datafixers/util/Function4;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V"), index = 5)
-    private MinecraftClient.WorldLoadAction custommapresetter$iknowwhatimdoing(MinecraftClient.WorldLoadAction worldLoadAction) {
-        return MinecraftClient.WorldLoadAction.NONE;
-    }
 } 
