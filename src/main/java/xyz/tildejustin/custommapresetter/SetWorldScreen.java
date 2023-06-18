@@ -7,7 +7,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ListWidget;
 import net.minecraft.client.render.Tessellator;
-
 import net.minecraft.util.Language;
 import net.minecraft.world.level.storage.LevelStorageAccess;
 import net.minecraft.world.level.storage.LevelSummary;
@@ -28,6 +27,7 @@ public class SetWorldScreen extends Screen {
     private ButtonWidget selectButton;
     private String defaultWorldName;
     private String mustConvertText;
+    private ButtonWidget autoreset;
 
 
     public SetWorldScreen(Screen parent) {
@@ -41,11 +41,15 @@ public class SetWorldScreen extends Screen {
         this.defaultWorldName = Language.getInstance().translate("selectWorld.world");
         worldList = new WorldListWidget(this.field_1229);
 //        worldList.setButtonIds(4, 5);
-        this.selectButton = new ButtonWidget(1, this.width / 2 - (150 / 2) - 150 - 5, this.height - 28, 150, 20, "Select World");
+        Language language = Language.getInstance();
+        this.selectButton = new ButtonWidget(1, 3, this.height - 28, this.width / 4 - 6, 20, language.translate("selectWorld.title"));
         this.selectButton.active = false;
-        this.buttons.add(new ButtonWidget(0, this.width / 2 + (150 / 2) + 5, this.height - 28, 150, 20, Language.getInstance().translate("gui.cancel")));
         this.buttons.add(selectButton);
-        this.buttons.add(new ButtonWidget(6, this.width / 2 - 75, this.height - 28, 150, 20, "Delete Session Worlds"));
+        // remember to update when button is pressed
+        this.autoreset = new ButtonWidget(7, this.width / 4 + 3, this.height - 28, this.width / 4 - 6, 20, "Autoreset: " + CustomMapResetter.autoreset);
+        this.buttons.add(this.autoreset);
+        this.buttons.add(new ButtonWidget(6, this.width / 2 + 3, this.height - 28, this.width / 4 - 6, 20, "Delete Session Worlds"));
+        this.buttons.add(new ButtonWidget(0, this.width / 4 * 3 + 3, this.height - 28, this.width / 4 - 6, 20, language.translate("gui.cancel")));
     }
 
     @Override
@@ -53,7 +57,7 @@ public class SetWorldScreen extends Screen {
         if (!button.active) {
             return;
         }
-        if (button.id == 1) {
+        if (button.id == this.selectButton.id) {
             CustomMapResetter.resetTracker.setCurrentWorld(this.getWorldFileName(this.selectedWorld));
             this.field_1229.openScreen(this.parent);
         } else if (button.id == 0) {
@@ -62,6 +66,10 @@ public class SetWorldScreen extends Screen {
         } else if (button.id == 6) {
             CustomMapResetter.resetTracker.deleteWorlds();
             this.loadWorlds();
+        } else if (button.id == this.autoreset.id) {
+            CustomMapResetter.autoreset = !CustomMapResetter.autoreset;
+            CustomMapResetter.resetTracker.writeResetCountFile(CustomMapResetter.resetTracker.resetCount, CustomMapResetter.resetTracker.resetCountFile);
+            this.autoreset.message = "Autoreset: " + CustomMapResetter.autoreset;
         } else {
             worldList.buttonClicked(button);
         }

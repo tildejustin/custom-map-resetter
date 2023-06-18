@@ -10,7 +10,7 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "client": [
       "xyz.tildejustin.custommapresetter.CustomMapResetter"
     ]
   },

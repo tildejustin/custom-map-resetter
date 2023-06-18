@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(TextureManager.class)
 public interface TextureManagerMixin {
     @Invoker
-    public int callGetTextureFromPath(String path);
+    int callGetTextureFromPath(String path);
 
     @Invoker
-    public void callBindTexture(int idx);
+    void callBindTexture(int idx);
 }

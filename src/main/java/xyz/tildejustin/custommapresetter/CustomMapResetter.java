@@ -1,6 +1,6 @@
 package xyz.tildejustin.custommapresetter;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.LoadingScreenRenderer;
@@ -11,66 +11,66 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 
-public class CustomMapResetter implements ModInitializer {
-	public static ResetTracker resetTracker;
-	private static final File attemptCountFile = FabricLoader.getInstance().getConfigDir().resolve("custom-map-attempts.txt").toFile();
-	public static boolean running = false;
-	public static boolean loading = false;
+public class CustomMapResetter implements ClientModInitializer {
+    private static final File attemptCountFile = FabricLoader.getInstance().getConfigDir().resolve("custom-map-attempts.txt").toFile();
+    public static ResetTracker resetTracker;
+    public static boolean running = false;
+    public static boolean loading = false;
+    public static boolean autoreset = true;
 
-	public static void tryLoadNewWorld() {
-		CustomMapResetter.loading = true;
-		if (CustomMapResetter.resetTracker.getCurrentWorld() == null) {
-			Minecraft.getMinecraft().openScreen(new SetWorldScreen(Minecraft.getMinecraft().currentScreen));
-			return;
-		}
-		File saveFile = Minecraft.getMinecraft().runDirectory.toPath().resolve("saves").resolve(CustomMapResetter.resetTracker.getCurrentWorld()).toFile();
-		File newSave = saveFile.getParentFile().toPath().resolve(CustomMapResetter.resetTracker.getCurrentWorld() + " attempt " + CustomMapResetter.resetTracker.incrementAttemptCount(CustomMapResetter.resetTracker.getCurrentWorld())).toFile();
-		if (!saveFile.exists()) {
-			Minecraft.getMinecraft().openScreen(new SetWorldScreen(Minecraft.getMinecraft().currentScreen));
-			return;
-		}
-		System.out.println("loading: " + saveFile);
-		CustomMapResetter.running = true;
-		LoadingScreenRenderer loadingScreen = new LoadingScreenRenderer(Minecraft.getMinecraft());
-		loadingScreen.setTitle("Copying World");
-		loadingScreen.setTask("");
-		while (newSave.exists()) {
-			newSave = new File(newSave.toString() + "-");
-		}
-		try {
-			Path finalNewSave = newSave.toPath();
-			Files.walkFileTree(saveFile.toPath(), new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-								throws IOException
-						{
-							Path targetdir = finalNewSave.resolve(saveFile.toPath().relativize(dir));
-							try {
-								Files.copy(dir, targetdir);
-							} catch (FileAlreadyExistsException e) {
-								if (!Files.isDirectory(targetdir))
-									throw e;
-							}
-							return FileVisitResult.CONTINUE;
-						}
-						@Override
-						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-								throws IOException
-						{
-							Files.copy(file, finalNewSave.resolve(saveFile.toPath().relativize(file)));
-							return FileVisitResult.CONTINUE;
-						}
-					});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		resetTracker.addWorld(newSave);
+    public static void tryLoadNewWorld() {
+        CustomMapResetter.loading = true;
+        if (CustomMapResetter.resetTracker.getCurrentWorld() == null) {
+            Minecraft.getMinecraft().openScreen(new SetWorldScreen(Minecraft.getMinecraft().currentScreen));
+            return;
+        }
+        File saveFile = Minecraft.getMinecraft().runDirectory.toPath().resolve("saves").resolve(CustomMapResetter.resetTracker.getCurrentWorld()).toFile();
+        File newSave = saveFile.getParentFile().toPath().resolve(CustomMapResetter.resetTracker.getCurrentWorld() + " attempt " + CustomMapResetter.resetTracker.incrementAttemptCount(CustomMapResetter.resetTracker.getCurrentWorld())).toFile();
+        if (!saveFile.exists()) {
+            Minecraft.getMinecraft().openScreen(new SetWorldScreen(Minecraft.getMinecraft().currentScreen));
+            return;
+        }
+        System.out.println("loading: " + saveFile);
+        CustomMapResetter.running = true;
+        LoadingScreenRenderer loadingScreen = new LoadingScreenRenderer(Minecraft.getMinecraft());
+        loadingScreen.setTitle("Copying World");
+        loadingScreen.setTask("");
+        while (newSave.exists()) {
+            newSave = new File(newSave + "-");
+        }
+        try {
+            Path finalNewSave = newSave.toPath();
+            Files.walkFileTree(saveFile.toPath(), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                        throws IOException {
+                    Path targetdir = finalNewSave.resolve(saveFile.toPath().relativize(dir));
+                    try {
+                        Files.copy(dir, targetdir);
+                    } catch (FileAlreadyExistsException e) {
+                        if (!Files.isDirectory(targetdir))
+                            throw e;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                        throws IOException {
+                    Files.copy(file, finalNewSave.resolve(saveFile.toPath().relativize(file)));
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        resetTracker.addWorld(newSave);
 //		method_2935 = startIntegratedServer
-		Minecraft.getMinecraft().method_2935(newSave.getName(), newSave.getName(), null);
-	}
+        Minecraft.getMinecraft().method_2935(newSave.getName(), newSave.getName(), null);
+    }
 
-	@Override
-	public void onInitialize() {
-		CustomMapResetter.resetTracker = new ResetTracker(attemptCountFile);
-	}
+    @Override
+    public void onInitializeClient() {
+        CustomMapResetter.resetTracker = new ResetTracker(attemptCountFile);
+    }
 }

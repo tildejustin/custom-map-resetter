@@ -1,5 +1,6 @@
 package xyz.tildejustin.custommapresetter.mixin;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -17,6 +18,9 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At(value = "HEAD"))
     private void custommapresetter$loadnext(CallbackInfo ci) {
+        if (!CustomMapResetter.autoreset) {
+            CustomMapResetter.running = false;
+        }
         if (CustomMapResetter.running && !CustomMapResetter.loading) {
             CustomMapResetter.tryLoadNewWorld();
         }
@@ -29,8 +33,11 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void custommapresetter$goldBootsOverlay(int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        ((TextureManagerMixin) Minecraft.getMinecraft().textureManager).callBindTexture(((TextureManagerMixin) Minecraft.getMinecraft().textureManager).callGetTextureFromPath("/gui/items.png"));
-        drawTexture(this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 3 * 16, 3 * 16, 16, 16);
+        // wow.
+        if (!FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString().contains("1.5")) {
+            ((TextureManagerMixin) Minecraft.getMinecraft().textureManager).callBindTexture(((TextureManagerMixin) Minecraft.getMinecraft().textureManager).callGetTextureFromPath("/gui/items.png"));
+            drawTexture(this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 3 * 16, 3 * 16, 16, 16);
+        }
     }
 
     @Inject(method = "buttonClicked", at = @At("HEAD"), cancellable = true)
