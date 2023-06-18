@@ -32,6 +32,7 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
     private ButtonWidget selectButton;
     private String defaultWorldName;
     private String mustConvertText;
+    private ButtonWidget autoreset;
 
 
     public SetWorldScreen(Screen parent) {
@@ -49,11 +50,14 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         this.defaultWorldName = I18n.translate("selectWorld.world");
         worldList = new WorldListWidget(this.client);
         worldList.setButtonIds(4, 5);
-        this.selectButton = new ButtonWidget(1, this.width / 2 - (150 / 2) - 150 - 5, this.height - 28, 150, 20, "Select World");
+        this.selectButton = new ButtonWidget(1, 3, this.height - 28, this.width / 4 - 6, 20, I18n.translate("selectWorld.title"));
         this.selectButton.active = false;
-        this.buttons.add(new ButtonWidget(0, this.width / 2 + (150 / 2) + 5, this.height - 28, 150, 20, I18n.translate("gui.cancel")));
         this.buttons.add(selectButton);
-        this.buttons.add(new ButtonWidget(6, this.width / 2 - 75, this.height - 28, 150, 20, "Delete Session Worlds"));
+        // remember to update when button is pressed
+        this.autoreset = new ButtonWidget(7, this.width / 4 + 3, this.height - 28, this.width / 4 - 6, 20, "Autoreset: " + CustomMapResetter.autoreset);
+        this.buttons.add(this.autoreset);
+        this.buttons.add(new ButtonWidget(6, this.width / 2 + 3, this.height - 28, this.width / 4 - 6, 20, "Delete Session Worlds"));
+        this.buttons.add(new ButtonWidget(0, this.width / 4 * 3 + 3, this.height - 28, this.width / 4 - 6, 20, I18n.translate("gui.cancel")));
     }
 
     @Override
@@ -61,11 +65,10 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
         if (!button.active) {
             return;
         }
-        if (button.id == 1) {
+        if (button.id == this.selectButton.id) {
             CustomMapResetter.resetTracker.setCurrentWorld(this.getWorldFileName(this.selectedWorld));
-            this.client.setScreen(this.parent);
+            CustomMapResetter.resetTracker.writeResetCountFile(CustomMapResetter.resetTracker.resetCount, CustomMapResetter.resetTracker.resetCountFile);
         } else if (button.id == 0) {
-            CustomMapResetter.resetTracker.setCurrentWorld(null);
             this.client.setScreen(this.parent);
         } else if (button.id == 6) {
             CustomMapResetter.resetTracker.deleteWorlds();
@@ -74,6 +77,10 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
             } catch (ClientException e) {
                 e.printStackTrace();
             }
+        } else if (button.id == this.autoreset.id) {
+            CustomMapResetter.autoreset = !CustomMapResetter.autoreset;
+            CustomMapResetter.resetTracker.writeResetCountFile(CustomMapResetter.resetTracker.resetCount, CustomMapResetter.resetTracker.resetCountFile);
+            this.autoreset.message = "Autoreset: " + CustomMapResetter.autoreset;
         } else {
             worldList.buttonClicked(button);
         }
@@ -83,6 +90,7 @@ public class SetWorldScreen extends Screen implements IdentifibleBooleanConsumer
     @Override
     public void handleMouse() {
         super.handleMouse();
+        // setting myself up for failure here :P
         if (Integer.parseInt(FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion().getFriendlyString().split("\\.")[1]) > 7) {
             worldList.handleMouse();
         }

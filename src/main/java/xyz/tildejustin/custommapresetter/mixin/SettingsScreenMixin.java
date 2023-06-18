@@ -15,7 +15,7 @@ import xyz.tildejustin.custommapresetter.CustomMapResetter;
 public abstract class SettingsScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     public void custommapresetter$addStopButton(CallbackInfo ci) {
-        if (CustomMapResetter.running) {
+        if (CustomMapResetter.running && CustomMapResetter.autoreset) {
             this.buttons.add(new ButtonWidget(1238, 5, this.height - 25, 100, 20, "Stop Resets & Quit"));
         }
     }

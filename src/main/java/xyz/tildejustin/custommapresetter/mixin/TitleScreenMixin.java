@@ -14,11 +14,15 @@ import xyz.tildejustin.custommapresetter.SetWorldScreen;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
-//    TODO: make it a wool block
+    //    TODO: make it a wool block
     private static final Identifier BUTTON_IMAGE = new Identifier("textures/items/diamond_boots.png");
 
     @Inject(method = "init", at = @At(value = "HEAD"))
     private void custommapresetter$loadnext(CallbackInfo ci) {
+        if (!CustomMapResetter.autoreset) {
+            // i don't really want to make a whole mixin in gamemenuscreen just for this, would bug if you got kicked for spamming maybe
+            CustomMapResetter.running = false;
+        }
         if (CustomMapResetter.running && !CustomMapResetter.loading) {
             CustomMapResetter.tryLoadNewWorld();
         }
