@@ -12,4 +12,5 @@ public abstract class PlayerManagerMixin {
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     private void custommapresetter$preventLoop(CallbackInfo ci) {
         CustomMapResetter.loading = false;
-    }}
+    }
+}

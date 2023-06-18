@@ -7,7 +7,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
@@ -77,7 +80,7 @@ public class ResetTracker {
     }
 
     public void writeAttemptNumber(int number) {
-        try(FileWriter file = new FileWriter(FabricLoader.getInstance().getGameDir().resolve("attempt.txt").toFile()))  {
+        try (FileWriter file = new FileWriter(FabricLoader.getInstance().getGameDir().resolve("attempt.txt").toFile())) {
             file.write(String.valueOf(number));
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,6 +93,7 @@ public class ResetTracker {
         } catch (IOException ignored) {
         }
         Map<String, Integer> newAttempts = new HashMap<>();
+        boolean update = false;
         try (Scanner countFileReader = new Scanner(countFile)) {
             if (countFileReader.hasNext()) {
                 String firstLine = countFileReader.nextLine().replace("\n", "");
@@ -97,16 +101,28 @@ public class ResetTracker {
                     this.setCurrentWorld(firstLine);
                 } else this.setCurrentWorld(null);
             } else this.setCurrentWorld(null);
+            if (countFileReader.hasNext()) {
+                try {
+                    CustomMapResetter.autoreset = countFileReader.nextBoolean();
+                    countFileReader.nextLine();
+                } catch (InputMismatchException e) {
+                    System.out.println("[custom-map-resetter] pre v1.4 config file, updating");
+                    update = true;
+                }
+            }
             while (countFileReader.hasNext()) {
                 String[] line = countFileReader.nextLine().split(" = ");
                 newAttempts.put(line[0], Integer.parseInt(line[1]));
             }
         } catch (IOException ignored) {
         }
+        if (update) {
+            this.writeResetCountFile(newAttempts, countFile);
+        }
         return newAttempts;
     }
 
-    private void writeResetCountFile(Map<String, Integer> currentAttempts, File countFile) {
+    protected void writeResetCountFile(Map<String, Integer> currentAttempts, File countFile) {
         try {
             countFile.createNewFile();
         } catch (IOException e) {
@@ -115,6 +131,8 @@ public class ResetTracker {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(countFile))) {
             String currWorld = this.getCurrentWorld() == null ? "" : this.getCurrentWorld();
             fileWriter.write(currWorld);
+            fileWriter.newLine();
+            fileWriter.write(String.valueOf(CustomMapResetter.autoreset));
             fileWriter.newLine();
             currentAttempts.forEach((String name, Integer attempts) -> {
                 try {
