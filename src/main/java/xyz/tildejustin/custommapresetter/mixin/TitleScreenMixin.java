@@ -17,7 +17,7 @@ import xyz.tildejustin.custommapresetter.SetWorldScreen;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
-//    TODO: make it a wool block
+    //    TODO: make it a wool block
     protected TitleScreenMixin(Text title) {
         super(title);
     }
@@ -25,6 +25,9 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "initWidgetsNormal", at = @At(value = "TAIL"))
     private void custommapresetter$addTitleScreenButton(CallbackInfo ci) {
+        if (!CustomMapResetter.autoreset) {
+            CustomMapResetter.running = false;
+        }
         if (CustomMapResetter.running && !CustomMapResetter.loading) {
             CustomMapResetter.tryLoadNewWorld();
         }
@@ -39,8 +42,6 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void custommapresetter$goldBootsOverlay(CallbackInfo ci) {
-//        this.minecraft.getTextureManager().bindTexture(BUTTON_IMAGE);
-//        (this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 0.0F, 0.0F, 16, 16, 16, 16);
         MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(new ItemStack(Items.DIAMOND_BOOTS), this.width / 2 - 124 + 2, this.height / 4 + 48 + 2);
     }
 }

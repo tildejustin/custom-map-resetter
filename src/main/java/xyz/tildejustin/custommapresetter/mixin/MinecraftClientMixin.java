@@ -1,4 +1,3 @@
-
 package xyz.tildejustin.custommapresetter.mixin;
 
 import net.minecraft.client.MinecraftClient;
