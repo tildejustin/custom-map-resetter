@@ -16,13 +16,16 @@ import xyz.tildejustin.custommapresetter.SetWorldScreen;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
-//    TODO: make it a wool block
+    //    TODO: make it a wool block
     protected TitleScreenMixin(Text title) {
         super(title);
     }
 
     @Inject(method = "init", at = @At(value = "TAIL"))
     private void custommapresetter$loadnext(CallbackInfo ci) {
+        if (!CustomMapResetter.autoreset) {
+            CustomMapResetter.running = false;
+        }
         if (CustomMapResetter.running && !CustomMapResetter.loading) {
             CustomMapResetter.tryLoadNewWorld();
         }
