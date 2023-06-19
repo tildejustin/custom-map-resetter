@@ -20,7 +20,7 @@ public abstract class SettingsScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     public void custommapresetter$addStopButton(CallbackInfo ci) {
-        if (CustomMapResetter.running) {
+        if (CustomMapResetter.running && CustomMapResetter.autoreset) {
             this.addDrawableChild(new ButtonWidget(5, this.height - 25, 100, 20, Text.of("Stop Resets & Quit"), button -> {
                 CustomMapResetter.running = false;
                 CustomMapResetter.loadedTextures = false;

@@ -12,7 +12,7 @@ import java.util.Objects;
 
 
 public class SetWorldScreen extends SelectWorldScreen {
-    protected final Screen parent;
+    public final Screen parent;
 
     public SetWorldScreen(Screen parent) {
         super(parent);
@@ -22,27 +22,34 @@ public class SetWorldScreen extends SelectWorldScreen {
     @Override
     public void init() {
         assert this.client != null;
-        ((SelectWorldScreenAccessor)this).setDeleteButton(new ButtonWidget(0, 0, 0, 0, Text.of(""), (buttonWidget) -> {}, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
-        ((SelectWorldScreenAccessor)this).setEditButton(new ButtonWidget(0, 0, 0, 0, Text.of(""), (buttonWidget) -> {}, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
-        ((SelectWorldScreenAccessor)this).setRecreateButton(new ButtonWidget(0, 0, 0, 0, Text.of(""), (buttonWidget) -> {}, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
-        ((SelectWorldScreenAccessor)this).setSearchBox(new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 22, 200, 20, this.searchBox, Text.translatable("selectWorld.search")));
-        ((SelectWorldScreenAccessor)this).setLevelList(new WorldListWidget(this, this.client, this.width, this.height, 48, this.height - 64, 36, ((SelectWorldScreenAccessor)this).getSearchBox().getText(), ((SelectWorldScreenAccessor)this).getLevelList()));
-        this.addDrawableChild(((SelectWorldScreenAccessor)this).getSearchBox());
-        this.addDrawableChild(((SelectWorldScreenAccessor)this).getLevelList());
-        ButtonWidget selectButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - (150 / 2) - 150 - 5, this.height - 28, 150, 20,  Text.translatable("Select World"), (buttonWidget) -> {
-                CustomMapResetter.resetTracker.setCurrentWorld(((WorldListWidget.WorldEntry) Objects.requireNonNull(((SelectWorldScreenAccessor) this).getLevelList().getSelectedOrNull())).level.getName());
+        ((SelectWorldScreenAccessor) this).setDeleteButton(new ButtonWidget(0, 0, 0, 0, Text.of(""), (buttonWidget) -> {
+        }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
+        ((SelectWorldScreenAccessor) this).setEditButton(new ButtonWidget(0, 0, 0, 0, Text.of(""), (buttonWidget) -> {
+        }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
+        ((SelectWorldScreenAccessor) this).setRecreateButton(new ButtonWidget(0, 0, 0, 0, Text.of(""), (buttonWidget) -> {
+        }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
+        ((SelectWorldScreenAccessor) this).setSearchBox(new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 22, 200, 20, this.searchBox, Text.translatable("selectWorld.search")));
+        ((SelectWorldScreenAccessor) this).setLevelList(new WorldListWidget(this, this.client, this.width, this.height, 48, this.height - 64, 36, ((SelectWorldScreenAccessor) this).getSearchBox().getText(), ((SelectWorldScreenAccessor) this).getLevelList()));
+        this.addDrawableChild(((SelectWorldScreenAccessor) this).getSearchBox());
+        this.addDrawableChild(((SelectWorldScreenAccessor) this).getLevelList());
+
+        ButtonWidget selectButton = this.addDrawableChild(new ButtonWidget(3, this.height - 28, this.width / 4 - 6, 20, Text.translatable("selectWorld.title"), (buttonWidget) -> {
+            CustomMapResetter.resetTracker.setCurrentWorld(((WorldListWidget.WorldEntry) Objects.requireNonNull(((SelectWorldScreenAccessor) this).getLevelList().getSelectedOrNull())).level.getName());
             this.client.setScreen(parent);
         }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
-        ((SelectWorldScreenAccessor)this).setSelectButton(selectButton);
-//        if > 16 this.addDrawableChild(button)
-        this.addDrawableChild(new ButtonWidget(this.width / 2 + (150 / 2) + 5, this.height - 28, 150, 20, Text.translatable("gui.cancel"), (buttonWidget) -> this.client.setScreen(this.parent), ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
-//        if > 16 this.addDrawableChild(button)
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 75, this.height - 28, 150, 20, Text.translatable("Delete Session Worlds"), (buttonWidget) -> {
+        ((SelectWorldScreenAccessor) this).setSelectButton(selectButton);
+        this.addDrawableChild(new ButtonWidget(this.width / 4 + 3, this.height - 28, this.width / 4 - 6, 20, Text.of("Autoreset: " + CustomMapResetter.autoreset), (button -> {
+            CustomMapResetter.autoreset = !CustomMapResetter.autoreset;
+            button.setMessage(Text.of("Autoreset: " + CustomMapResetter.autoreset));
+            CustomMapResetter.resetTracker.writeResetCountFile(CustomMapResetter.resetTracker.resetCount, CustomMapResetter.resetTracker.resetCountFile);
+        }), ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 + 3, this.height - 28, this.width / 4 - 6, 20, Text.of("Delete Session Worlds"), (buttonWidget) -> {
             CustomMapResetter.resetTracker.deleteWorlds();
-            ((SelectWorldScreenAccessor)this).getLevelList().setSearch("");
+            ((SelectWorldScreenAccessor) this).getLevelList().setSearch("");
             ((SelectWorldScreenAccessor) this).getLevelList().load();
         }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
+        this.addDrawableChild(new ButtonWidget(this.width / 4 * 3 + 3, this.height - 28, this.width / 4 - 6, 20, Text.translatable("gui.cancel"), (buttonWidget) -> this.client.setScreen(this.parent), ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
         this.worldSelected(false, false);
-        this.setInitialFocus(((SelectWorldScreenAccessor)this).getSearchBox());
+        this.setInitialFocus(((SelectWorldScreenAccessor) this).getSearchBox());
     }
 }
