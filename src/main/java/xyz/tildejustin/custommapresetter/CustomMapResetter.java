@@ -16,7 +16,7 @@ public class CustomMapResetter implements ClientModInitializer {
     public static boolean running = false;
     public static boolean loading = false;
     public static boolean loadedTextures = false;
-    public static boolean autoreset;
+    public static boolean autoreset = true;
 
     public static void tryLoadNewWorld() {
         CustomMapResetter.loading = true;
