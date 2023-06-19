@@ -11,7 +11,8 @@
   "client": [
     "MinecraftClientMixin",
     "SettingsScreenMixin",
-    "TitleScreenMixin"
+    "TitleScreenMixin",
+    "WorldListWidget$EntryMixin"
   ],
   "injectors": {
     "defaultRequire": 0
