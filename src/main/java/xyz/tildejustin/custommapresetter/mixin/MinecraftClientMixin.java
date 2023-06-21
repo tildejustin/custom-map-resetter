@@ -16,7 +16,7 @@ public abstract class MinecraftClientMixin {
     private void custommapresetter$stopResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> cir) {
         if (CustomMapResetter.running) {
             if (CustomMapResetter.loadedTextures) {
-                cir.setReturnValue(null);
+                cir.setReturnValue(new CompletableFuture<>());
             }
             CustomMapResetter.loadedTextures = true;
         }
