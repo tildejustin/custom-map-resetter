@@ -30,7 +30,6 @@ public class CustomMapResetter implements ClientModInitializer {
             MinecraftClient.getInstance().setScreen(new SetWorldScreen(MinecraftClient.getInstance().currentScreen));
             return;
         }
-        System.out.println("loading: " + saveFile);
         CustomMapResetter.running = true;
         ProgressScreen loadingScreen = new ProgressScreen(false);
         loadingScreen.setTitle(new LiteralText("Copying World"));

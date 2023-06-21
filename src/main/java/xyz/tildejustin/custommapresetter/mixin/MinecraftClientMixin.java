@@ -16,7 +16,7 @@ public abstract class MinecraftClientMixin {
     private void custommapresetter$stopResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> cir) {
         if (CustomMapResetter.running) {
             if (CustomMapResetter.loadedTextures) {
-                cir.setReturnValue(null);
+                cir.setReturnValue(new CompletableFuture<>());
             }
             CustomMapResetter.loadedTextures = true;
         }
@@ -24,6 +24,16 @@ public abstract class MinecraftClientMixin {
 
     @ModifyArg(method = "startIntegratedServer(Ljava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;startIntegratedServer(Ljava/lang/String;Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;Ljava/util/function/Function;Lcom/mojang/datafixers/util/Function4;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V"), index = 5)
     private MinecraftClient.WorldLoadAction custommapresetter$iknowwhatimdoing(MinecraftClient.WorldLoadAction worldLoadAction) {
+        return MinecraftClient.WorldLoadAction.NONE;
+    }
+
+    @ModifyArg(
+            method = "startIntegratedServer(Ljava/lang/String;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;startIntegratedServer(Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V"),
+            index = 4
+    )
+    private MinecraftClient.WorldLoadAction custommapresetter$iknowwhatimdoingoneeightteen(MinecraftClient.WorldLoadAction worldLoadAction) {
+        System.out.println("using none");
         return MinecraftClient.WorldLoadAction.NONE;
     }
 } 
