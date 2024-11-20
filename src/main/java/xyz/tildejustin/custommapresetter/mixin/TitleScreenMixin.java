@@ -8,7 +8,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
-import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,8 +22,9 @@ public abstract class TitleScreenMixin extends Screen {
         super(title);
     }
 
-
-    @Inject(method = "initWidgetsNormal", at = @At(value = "TAIL"))
+    // method_25423 -> init
+    @Dynamic
+    @Inject(method = {"initWidgetsNormal", "Lnet/minecraft/client/gui/screen/TitleScreen;method_25426()V"}, at = @At(value = "TAIL"), require = 1)
     private void custommapresetter$addTitleScreenButton(CallbackInfo ci) {
         if (!CustomMapResetter.autoreset) {
             CustomMapResetter.running = false;
