@@ -45,6 +45,7 @@ public class CustomMapResetter implements ClientModInitializer {
             e.printStackTrace();
         }
         resetTracker.addWorld(newSave);
+        // method_57784 and method_54618 should be matched, but they aren't
         MinecraftClient.getInstance().createIntegratedServerLoader().start(newSave.getName(), () -> {});
     }
 
