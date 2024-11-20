@@ -37,13 +37,13 @@ public abstract class TitleScreenMixin extends Screen {
             } else {
                 CustomMapResetter.tryLoadNewWorld();
             }
-        }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
+        }, ButtonWidget.EMPTY));
     }
 
     @Inject(method = "render", at = @At("TAIL"))
     private void custommapresetter$goldBootsOverlay(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 //        this.minecraft.getTextureManager().bindTexture(BUTTON_IMAGE);
 //        (this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 0.0F, 0.0F, 16, 16, 16, 16);
-        MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(matrices, new ItemStack(Items.DIAMOND_BOOTS), this.width / 2 - 124 + 2, this.height / 4 + 48 + 2);
+        MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(new ItemStack(Items.DIAMOND_BOOTS), this.width / 2 - 124 + 2, this.height / 4 + 48 + 2);
     }
 }

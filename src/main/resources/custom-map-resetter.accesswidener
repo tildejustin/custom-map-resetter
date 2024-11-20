@@ -1,6 +1,4 @@
 accessWidener	v1	named
 accessible method net/minecraft/client/MinecraftClient render (Z)V
-accessible field net/minecraft/client/gui/widget/ButtonWidget DEFAULT_NARRATION_SUPPLIER Lnet/minecraft/client/gui/widget/ButtonWidget$NarrationSupplier;
-accessible method net/minecraft/client/gui/widget/ButtonWidget <init> (IIIILnet/minecraft/text/Text;Lnet/minecraft/client/gui/widget/ButtonWidget$PressAction;Lnet/minecraft/client/gui/widget/ButtonWidget$NarrationSupplier;)V
 accessible method net/minecraft/client/gui/screen/world/WorldListWidget load ()V
 accessible field net/minecraft/client/gui/screen/world/WorldListWidget$WorldEntry level Lnet/minecraft/world/level/storage/LevelSummary;

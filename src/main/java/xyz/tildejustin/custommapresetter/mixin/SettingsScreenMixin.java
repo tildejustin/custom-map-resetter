@@ -28,7 +28,7 @@ public abstract class SettingsScreenMixin extends Screen {
                 MinecraftClient.getInstance().world.disconnect();
                 MinecraftClient.getInstance().disconnect();
                 MinecraftClient.getInstance().setScreen(new TitleScreen());
-            }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
+            }, ButtonWidget.EMPTY));
         }
     }
 }
