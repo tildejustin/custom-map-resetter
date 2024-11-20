@@ -29,7 +29,7 @@ public class SetWorldScreen extends SelectWorldScreen {
         ((SelectWorldScreenAccessor) this).setRecreateButton(new ButtonWidget(0, 0, 0, 0, Text.of(""), (buttonWidget) -> {
         }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
         ((SelectWorldScreenAccessor) this).setSearchBox(new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 22, 200, 20, this.searchBox, Text.translatable("selectWorld.search")));
-        ((SelectWorldScreenAccessor) this).setLevelList(new WorldListWidget(this, this.client, this.width, this.height, 48, this.height - 64, 36, ((SelectWorldScreenAccessor) this).getSearchBox().getText(), ((SelectWorldScreenAccessor) this).getLevelList()));
+        ((SelectWorldScreenAccessor) this).setLevelList(new WorldListWidget(this, this.client, this.width, this.height - 112, 48, 36, ((SelectWorldScreenAccessor) this).getSearchBox().getText(), ((SelectWorldScreenAccessor) this).getLevelList()));
         this.addDrawableChild(((SelectWorldScreenAccessor) this).getSearchBox());
         this.addDrawableChild(((SelectWorldScreenAccessor) this).getLevelList());
 
@@ -49,7 +49,7 @@ public class SetWorldScreen extends SelectWorldScreen {
             ((SelectWorldScreenAccessor) this).getLevelList().load();
         }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
         this.addDrawableChild(new ButtonWidget(this.width / 4 * 3 + 3, this.height - 28, this.width / 4 - 6, 20, Text.translatable("gui.cancel"), (buttonWidget) -> this.client.setScreen(this.parent), ButtonWidget.DEFAULT_NARRATION_SUPPLIER));
-        this.worldSelected(false, false);
+        this.worldSelected(null);
         this.setInitialFocus(((SelectWorldScreenAccessor) this).getSearchBox());
     }
 }

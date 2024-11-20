@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
-    @Inject(method = {"reloadResources(Z)Ljava/util/concurrent/CompletableFuture;", "reloadResourcesConcurrently"}, at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = {"reloadResources(ZLnet/minecraft/client/MinecraftClient$LoadingContext;)Ljava/util/concurrent/CompletableFuture;", "reloadResourcesConcurrently"}, at = @At(value = "HEAD"), cancellable = true)
     private void custommapresetter$stopResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> cir) {
         if (CustomMapResetter.running) {
             if (CustomMapResetter.loadedTextures) {

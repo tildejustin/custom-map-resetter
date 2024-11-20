@@ -1,10 +1,10 @@
 package xyz.tildejustin.custommapresetter.mixin;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
@@ -41,9 +41,9 @@ public abstract class TitleScreenMixin extends Screen {
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void custommapresetter$goldBootsOverlay(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void custommapresetter$goldBootsOverlay(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 //        this.minecraft.getTextureManager().bindTexture(BUTTON_IMAGE);
-//        (this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 0.0F, 0.0F, 16, 16, 16, 16);
-        MinecraftClient.getInstance().getItemRenderer().renderGuiItemIcon(matrices, new ItemStack(Items.DIAMOND_BOOTS), this.width / 2 - 124 + 2, this.height / 4 + 48 + 2);
+//        (this.width / 2 - 124 + 2, this.height / 4 + 48 + 2, 0.0F, 0.xt0F, 16, 16, 16, 16);
+        context.drawItem(new ItemStack(Items.DIAMOND_BOOTS), this.width / 2 - 124 + 2, this.height / 4 + 48 + 2);
     }
 }
