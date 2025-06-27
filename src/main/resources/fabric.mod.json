@@ -7,6 +7,11 @@
   "authors": [
     "tildejustin"
   ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/custom-map-resetter",
+    "sources": "https://github.com/tildejustin/custom-map-resetter",
+    "issues": "https://github.com/tildejustin/custom-map-resetter/issues"
+  },
   "license": "MIT",
   "environment": "*",
   "entrypoints": {

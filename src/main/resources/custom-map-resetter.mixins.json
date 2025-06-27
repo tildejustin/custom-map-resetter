@@ -15,5 +15,9 @@
   ],
   "injectors": {
     "defaultRequire": 0
+  },
+  "overwrites": {
+    "conformVisibility": true,
+    "requireAnnotations": true
   }
 }
