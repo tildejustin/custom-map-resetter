@@ -9,7 +9,7 @@ import xyz.tildejustin.custommapresetter.CustomMapResetter;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
-    @Inject(method = "onPlayerConnect", at = @At("TAIL"))
+    @Inject(method = {"onPlayerConnect", "method_14570(Lnet/minecraft/network/ClientConnection;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/class_8792;)V"}, at = @At("TAIL"))
     private void custommapresetter$preventLoop(CallbackInfo ci) {
         CustomMapResetter.loading = false;
     }

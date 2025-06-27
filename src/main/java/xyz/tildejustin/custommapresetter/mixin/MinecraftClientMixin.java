@@ -11,11 +11,12 @@ import java.util.concurrent.CompletableFuture;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
-    @Inject(method = {"reloadResources(Z)Ljava/util/concurrent/CompletableFuture;", "reloadResourcesConcurrently"}, at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = {"reloadResources(Z)Ljava/util/concurrent/CompletableFuture;", "method_36561(ZLnet/minecraft/class_310$class_8764;)Ljava/util/concurrent/CompletableFuture;"}, at = @At(value = "HEAD"), cancellable = true)
     private void custommapresetter$stopResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> cir) {
         if (CustomMapResetter.running) {
             if (CustomMapResetter.loadedTextures) {
-                cir.setReturnValue(new CompletableFuture<>());
+                cir.setReturnValue(CompletableFuture.completedFuture(null));
+                return;
             }
             CustomMapResetter.loadedTextures = true;
         }

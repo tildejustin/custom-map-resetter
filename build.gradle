@@ -16,9 +16,6 @@ loom {
 			options.putAll(["mark-corresponding-synthetics": "1", "indent-string": "    "])
 		}
 	}
-	mixin {
-		useLegacyMixinAp = false
-	}
 	accessWidenerPath = file("src/main/resources/custom-map-resetter.accesswidener")
 }
 
