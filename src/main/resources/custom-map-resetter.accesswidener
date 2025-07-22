@@ -4,3 +4,4 @@ accessible field net/minecraft/client/gui/widget/ButtonWidget DEFAULT_NARRATION_
 accessible method net/minecraft/client/gui/widget/ButtonWidget <init> (IIIILnet/minecraft/text/Text;Lnet/minecraft/client/gui/widget/ButtonWidget$PressAction;Lnet/minecraft/client/gui/widget/ButtonWidget$NarrationSupplier;)V
 accessible method net/minecraft/client/gui/screen/world/WorldListWidget load ()V
 accessible field net/minecraft/client/gui/screen/world/WorldListWidget$WorldEntry level Lnet/minecraft/world/level/storage/LevelSummary;
+accessible method net/minecraft/server/integrated/IntegratedServerLoader start (Lnet/minecraft/client/gui/screen/Screen;Ljava/lang/String;ZZ)V
